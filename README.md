@@ -1,7 +1,16 @@
 # Репозиторий для выполнения домашних заданий курса "Инфраструктурная платформа на основе Kubernetes-2024-02" 
 
 ### ДЗ №2 ###
-Скрипт:
+## В процессе сделано:
+- Создан манифест namespace.yaml для namespace с именем homework
+- Создан манифест deployment.yaml
+  - Создаётся в namespace homework
+  - Запускает 3 пода
+  - Имеетreadiness пробу, которая проверяет наличие файла /homework/index.html
+  - Стратегия обновления RollingUpdate, с maxUnavailable: 1
+  - Так же Deployment запускаетя на нодах с тэгом homework=true
+
+## Как запустить проект и проверить проверить работоспособность:
 ```./kubernetes-controllers/run.sh```
 
 Вывод:
