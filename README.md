@@ -13,20 +13,29 @@
 
 Вывод:
 ```
-namespace/homework created
++ kubectl apply -f namespace.yaml
+namespace/homework unchanged
++ kubectl get po -n homework
+NAME    READY   STATUS    RESTARTS      AGE
+nginx   1/1     Running   1 (23h ago)   23h
++ kubectl config set-context --current --namespace=homework
 Context "minikube" modified.
-configmap/nginx-conf created
-pod/nginx created
++ kubectl apply -f configmap.yaml
+configmap/nginx-conf unchanged
++ kubectl apply -f pod.yaml
+pod/nginx configured
++ timeout 10 kubectl port-forward pods/nginx 8000:8000 -n homework
 Forwarding from 127.0.0.1:8000 -> 8000
 Forwarding from [::1]:8000 -> 8000
++ curl localhost:8000 -S -I
 Handling connection for 8000
 HTTP/1.1 200 OK
 Server: nginx/1.26.0
-Date: Mon, 13 May 2024 22:15:57 GMT
+Date: Tue, 14 May 2024 22:06:44 GMT
 Content-Type: text/html
-Content-Length: 149331
-Last-Modified: Mon, 13 May 2024 22:15:35 GMT
+Content-Length: 149303
+Last-Modified: Tue, 14 May 2024 22:05:36 GMT
 Connection: keep-alive
-ETag: "66429107-24753"
+ETag: "6643e030-24737"
 Accept-Ranges: bytes
 ```

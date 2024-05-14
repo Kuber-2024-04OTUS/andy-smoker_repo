@@ -1,6 +1,8 @@
+#!/bin/bash -xe
 # minikube start --driver=docker # --mount --mount-string $(pwd)/volumes:/volumes
 
 kubectl apply -f namespace.yaml
+kubectl get po -n homework
 kubectl config set-context --current --namespace=homework
 kubectl apply -f configmap.yaml
 kubectl apply -f pod.yaml
