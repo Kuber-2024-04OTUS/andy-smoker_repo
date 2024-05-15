@@ -1,0 +1,50 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: homework
+spec:
+  containers:
+    - name: nginx
+      image: nginx:stable
+      volumeMounts:
+        - mountPath: /homework
+          name: homework
+        - mountPath: /etc/nginx/conf.d/
+          name: nginx-conf
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+      lifecycle:
+        preStop:
+          exec:
+            command:
+              - sh
+              - -c
+              - rm /homework/index.html
+
+      ports:
+        - containerPort: 8000
+  initContainers:
+    - name: busybox
+      image: busybox
+      command:
+        - sh
+        - -c
+        - wget https://ru.wikipedia.org/wiki/Hello,_world! -O /init/index.html
+      volumeMounts:
+        - name: homework
+          mountPath: /init
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+  volumes:
+    - name: nginx-conf
+      configMap:
+        name: nginx-conf
+    - name: homework
+      emptyDir:
+        sizeLimit: 500Mi
