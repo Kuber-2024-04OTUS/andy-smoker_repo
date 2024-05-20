@@ -11,7 +11,7 @@ spec:
       volumeMounts:
         - mountPath: /homework
           name: homework
-        - mountPath: /etc/nginx/conf.d
+        - mountPath: /etc/nginx/conf.d/
           name: nginx-conf
       resources:
         limits:
@@ -41,8 +41,6 @@ spec:
         limits:
           memory: "128Mi"
           cpu: "500m"
-      ports:
-        - containerPort: 8000
   volumes:
     - name: nginx-conf
       configMap:
