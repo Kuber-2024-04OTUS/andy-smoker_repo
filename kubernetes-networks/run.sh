@@ -15,4 +15,4 @@ kubectl get services -n ingress-nginx
 kubectl describe -f deployment.yaml
 sleep 5
 
-curl $(minikube ip):80 -H "Host: homework.otus" -S -I
+curl $(minikube ip):80/homepage -H "Host: homework.otus" -S -I

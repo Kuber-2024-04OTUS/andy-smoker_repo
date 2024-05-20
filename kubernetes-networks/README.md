@@ -6,6 +6,7 @@
    - Описан сервис service-nginx который перенаправляет трафик на поды
  - Создан манифест ingress.yaml
    - объект типа ingress перенаправляет http запросы к хосту homework.otus на сервис service-nginx
+   - Перенаправляет homework.otus/homepage на homework.otus/index.html
 
 ## Как запустить проект и проверить работособность:
 ```./run.sh```
@@ -29,8 +30,8 @@ ingress.networking.k8s.io/ingress-nginx created
 + sleep 30
 + kubectl get services -n ingress-nginx
 NAME                                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
-ingress-nginx-controller             NodePort    10.102.181.60   <none>        80:32526/TCP,443:30637/TCP   11m
-ingress-nginx-controller-admission   ClusterIP   10.111.99.4     <none>        443/TCP                      11m
+ingress-nginx-controller             NodePort    10.102.181.60   <none>        80:32526/TCP,443:30637/TCP   27m
+ingress-nginx-controller-admission   ClusterIP   10.111.99.4     <none>        443/TCP                      27m
 + kubectl describe -f deployment.yaml
 Name:         nginx-conf
 Namespace:    homework
@@ -58,7 +59,7 @@ Events:  <none>
 
 Name:                   nginx
 Namespace:              homework
-CreationTimestamp:      Tue, 21 May 2024 00:48:00 +0300
+CreationTimestamp:      Tue, 21 May 2024 01:03:42 +0300
 Labels:                 <none>
 Annotations:            deployment.kubernetes.io/revision: 1
 Selector:               app=nginx
@@ -118,13 +119,13 @@ Events:
   Normal  ScalingReplicaSet  31s   deployment-controller  Scaled up replica set nginx-85ccdf8b87 to 3
 + sleep 5
 ++ minikube ip
-+ curl 192.168.49.2:80 -H 'Host: homework.otus' -S -I
++ curl 192.168.49.2:80/homepage -H 'Host: homework.otus' -S -I
 HTTP/1.1 200 OK
-Date: Mon, 20 May 2024 21:48:36 GMT
+Date: Mon, 20 May 2024 22:04:18 GMT
 Content-Type: text/html
 Content-Length: 149551
 Connection: keep-alive
-Last-Modified: Mon, 20 May 2024 21:48:06 GMT
-ETag: "664bc516-2482f"
+Last-Modified: Mon, 20 May 2024 22:03:45 GMT
+ETag: "664bc8c1-2482f"
 Accept-Ranges: bytes
 ```
