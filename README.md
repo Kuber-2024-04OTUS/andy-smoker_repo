@@ -41,3 +41,7 @@ Accept-Ranges: bytes
 ```
 
 ### [ДЗ №2](kubernetes-controllers/README.md)
+---
+### [ДЗ №3](kubernetes-networks/README.md)
+---
+### [ДЗ №4](kubernetes-volumes/README.md)
