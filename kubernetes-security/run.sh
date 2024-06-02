@@ -15,6 +15,13 @@ kubectl describe -f pvc.yaml
 kubectl get pvc
 kubectl describe -f deployment.yaml
 kubectl get services -n ingress-nginx
+
+export TOKEN=$(kubectl create token cd --duration=24h --namespace=homework)
+export APISERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
+kubectl get secret $(kubectl get sa monitoring -n homework -o jsonpath='{.secrets[0].name}') -n homework -o jsonpath='{.data.ca\.crt}' | base64 --decode > ca.crt
+export CONTEXT="monitoring-context"
+kubectl config view
+
 sleep 5
 
 curl $(minikube ip):80/homepage -H "Host: homework.otus" -S -I

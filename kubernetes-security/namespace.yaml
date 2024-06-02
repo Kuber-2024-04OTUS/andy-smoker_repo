@@ -10,8 +10,8 @@ metadata:
   namespace: homework
   name: monitoring-role
 rules:
-  - apiGroups: ["", "rbac.authorization.k8s.io"]
-    resources: ["pods"]
+  - apiGroups: [""]
+    resources: ["pods", "nodes", "services", "endpoints"]
     verbs: ["get", "watch", "list"]
 ---
 apiVersion: v1
@@ -47,22 +47,22 @@ roleRef:
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: cluster-metrics
+  name: cluster.admin
 rules:
   - apiGroups: ["*"]
     resources: ["*"]
-    verbs: ["get"]
+    verbs: ["*"]
     # nonResourceURLs: ["*"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kubernetes-metrics
+  name: cluster.admin.binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cluster-metrics
+  name: cluster.admin
 subjects:
   - kind: ServiceAccount
-    name: monitoring
+    name: cd
     namespace: homework
