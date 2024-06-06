@@ -38,12 +38,14 @@ spec:
             postStart:
               exec:
                 command:
-                  - | 
-                    KUBERAPI=https://kubernetes.default.svc
-                    SA=/var/run/secrets/kubernetes.io/serviceaccount
-                    CACERT=${SA}/ca.crt
-                    TOKEN=$(cat ${SA}/token)
-                    NAMESPACE=$(cat ${SA}/namespace)
+                  - sh
+                  - -c
+                  - |
+                    KUBERAPI=https://kubernetes.default.svc;
+                    SA=/var/run/secrets/kubernetes.io/serviceaccount;
+                    CACERT=${SA}/ca.crt;
+                    TOKEN=$(cat ${SA}/token);
+                    NAMESPACE=$(cat ${SA}/namespace);
                     curl --cacert ${CACERT} \
                     -H "Authorization: Bearer ${TOKEN}" \
                     -X GET \
