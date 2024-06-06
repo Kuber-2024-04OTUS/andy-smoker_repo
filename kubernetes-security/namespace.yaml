@@ -47,12 +47,24 @@ roleRef:
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
+  name: cluster.monitoring
+rules:
+  - nonResourceURLs:
+      - "/metrics"
+    verbs:
+      - "get"
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
   name: cluster.admin
 rules:
-  - apiGroups: ["*"]
-    resources: ["*"]
-    verbs: ["*"]
-    # nonResourceURLs: ["*"]
+  - apiGroups:
+      - "*"
+    resources:
+      - "*"
+    verbs:
+      - "*"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -65,4 +77,17 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: cd
+    namespace: homework
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster.monitoring.binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster.monitoring
+subjects:
+  - kind: ServiceAccount
+    name: monitoring
     namespace: homework
