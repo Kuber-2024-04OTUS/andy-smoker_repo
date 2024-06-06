@@ -27,4 +27,4 @@ sleep 5
 curl $(minikube ip):80/homepage -H "Host: homework.otus" -S -I
 curl $(minikube ip):80/conf/ -H "Host: homework.otus"
 curl $(minikube ip):80/conf/config1 -H "Host: homework.otus"
-curl $(minikube ip):80/metrics -H "Host: homework.otus"
+curl $(minikube ip):80/metrics -H "Host: homework.otus" 1> metrics.txt

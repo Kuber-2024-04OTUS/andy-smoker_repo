@@ -208,14 +208,7 @@ Connection: keep-alive
 + curl 192.168.49.2:80/conf/config1 -H 'Host: homework.otus'
 value1++ minikube ip
 + curl 192.168.49.2:80/metrics -H 'Host: homework.otus'
-{
-  "kind": "Status",
-  "apiVersion": "v1",
-  "metadata": {},
-  "status": "Failure",
-  "message": "forbidden: User \"system:serviceaccount:homework:monitoring\" cannot get path \"/metrics\"",
-  "reason": "Forbidden",
-  "details": {},
-  "code": 403
-}%   
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 2923k  100 2923k    0     0   356M      0 --:--:-- --:--:-- --:--:--  356M  
 ```
