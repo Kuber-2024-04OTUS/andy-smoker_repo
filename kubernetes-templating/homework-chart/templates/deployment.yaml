@@ -26,7 +26,7 @@ spec:
           imagePullPolicy: {{ .Values.app.image.pullPolicy }}
           volumeMounts:
             - mountPath: /homework
-              name: homework
+              name: {{ .Values.volumes.homework.name }}
             - mountPath: /etc/nginx/conf.d/
               name: {{ .Values.configs.nginx.name }}
             - mountPath: /homework/conf
@@ -71,14 +71,14 @@ spec:
           value: "true"
 
       initContainers:
-        - name: busybox
-          image: busybox
+        - name: {{ .Values.initContainers.busybox.name }}
+          image: "{{ .Values.initContainers.busybox.image.repository }}:{{ .Values.initContainers.busybox.image.tag }}"
           command:
             - sh
             - -c
             - wget https://ru.wikipedia.org/wiki/Hello,_world! -O /init/index.html
           volumeMounts:
-            - name: homework
+            - name: {{ .Values.volumes.homework.name }}
               mountPath: /init
           resources:
             limits:
@@ -91,6 +91,6 @@ spec:
         - name: {{ .Values.configs.homework.name }}
           configMap:
             name: {{ .Values.configs.homework.name }}
-        - name: homework
+        - name: {{ .Values.volumes.homework.name }}
           persistentVolumeClaim:
-            claimName: pvc1
+            claimName: {{ .Values.volumes.homework.persistentVolumeClaim.claimName }}

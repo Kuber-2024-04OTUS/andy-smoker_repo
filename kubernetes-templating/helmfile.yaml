@@ -27,7 +27,7 @@ releases:
         image:
           tag: 3.5.2
         auth:
-          clientProtocol: SASL
-          interBrokerProtocol: SASL
+          clientProtocol: sasl_plaintext
+          interBrokerProtocol: sasl_plaintext
     installed: true
     createNamespace: true

@@ -2,6 +2,9 @@
 # Default values for homework.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+
+ingressIP: 192.168.49.2
+
 namespace: homework
 
 replicaCount: 3
@@ -22,6 +25,13 @@ app:
     tag: stable
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
+
+initContainers:
+  busybox:
+    name: busybox
+    image:
+      repository: nginx
+      tag: latest
 
 roles:
   - monitoring:
@@ -146,21 +156,15 @@ readinessProbe:
 
 # Additional volumes on the output Deployment definition.
 volumes:
-  - name: nginx-conf
+  nginx-conf:
+    name: nginx-conf
     configMap:
       name: nginx-conf
-  - name: homework-conf
+  homework-conf:
+    name: homework-conf
     configMap:
       name: homework-conf
-  - name: homework
+  homework:
+    name: homework
     persistentVolumeClaim:
       claimName: pvc1
-
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts:
-  - mountPath: /homework
-    name: homework
-  - mountPath: /etc/nginx/conf.d/
-    name: nginx-conf
-  - mountPath: /homework/conf
-    name: homework-conf
