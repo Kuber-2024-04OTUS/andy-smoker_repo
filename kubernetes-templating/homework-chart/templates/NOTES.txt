@@ -1,0 +1,6 @@
+ClusterIP: 192.168.49.2
+curl 192.168.49.2:80/homepage -H Host: homework.otus -S -I
+curl 192.168.49.2:80/conf/ -H Host: homework.otus
+curl 192.168.49.2:80/conf/config1 -H Host: homework.otus
+curl 192.168.49.2:80/metrics -H Host: homework.otus
+

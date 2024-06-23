@@ -1,0 +1,96 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  namespace: {{ include "homework.namespace" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      serviceAccountName: monitoring
+      containers:
+        - name: {{ .Values.app.name }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          volumeMounts:
+            - mountPath: /homework
+              name: homework
+            - mountPath: /etc/nginx/conf.d/
+              name: {{ .Values.configs.nginx.name }}
+            - mountPath: /homework/conf
+              name: {{ .Values.configs.homework.name }}
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - KUBERAPI=https://kubernetes.default.svc
+                  - SA=/var/run/secrets/kubernetes.io/serviceaccount
+                  - CACERT=${SA}/ca.crt
+                  - TOKEN=$(cat ${SA}/token)
+                  - NAMESPACE=$(cat ${SA}/namespace)
+                  - |
+                    curl --cacert ${CACERT} \
+                    -H "Authorization: Bearer ${TOKEN}" \
+                    -X GET \
+                    "${KUBERAPI}/metrics" > /homework/metrics.html
+            preStop:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - rm /homework/index.html
+          ports:
+          {{- range .Values.app.ports }}
+            - containerPort: {{ . }}
+          {{- end }}
+          {{- if .Values.readinessProbe.nginx.enabled }}
+          readinessProbe: 
+            {{- toYaml .Values.readinessProbe.nginx | nindent 12 }}
+          {{- end }}
+      tolerations:
+        - key: "homework"
+          operator: "Equal"
+          value: "true"
+
+      initContainers:
+        - name: busybox
+          image: busybox
+          command:
+            - sh
+            - -c
+            - wget https://ru.wikipedia.org/wiki/Hello,_world! -O /init/index.html
+          volumeMounts:
+            - name: homework
+              mountPath: /init
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+      volumes:
+        - name: {{ .Values.configs.nginx.name }}
+          configMap:
+            name: {{ .Values.configs.nginx.name }}
+        - name: {{ .Values.configs.homework.name }}
+          configMap:
+            name: {{ .Values.configs.homework.name }}
+        - name: homework
+          persistentVolumeClaim:
+            claimName: pvc1

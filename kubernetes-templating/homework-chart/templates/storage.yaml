@@ -1,0 +1,25 @@
+{{- if .Values.storageClass.retain.enable }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.storageClass.retain.name }}
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+  annotations:
+    meta.helm.sh/release-name: {{ include "homework.namespace" . }}
+provisioner: {{ .Values.storageClass.retain.provisioner }}
+reclaimPolicy: {{ .Values.storageClass.retain.policy }}
+{{ end -}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.pvc.nginx.name}}
+spec:
+  resources:
+    requests:
+      storage: {{ .Values.pvc.nginx.volume }}
+  volumeMode: {{ .Values.pvc.nginx.volumeMode}}
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.storageClass.retain.name }}
