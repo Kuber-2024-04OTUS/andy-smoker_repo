@@ -1,0 +1,12 @@
+{{- range .Values.configs }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .name }}
+  namespace: {{ include "homework.namespace" $ }}
+{{- with .data }}
+data:
+  {{- toYaml . | nindent 2 -}}
+{{ end -}}
+{{ end -}}

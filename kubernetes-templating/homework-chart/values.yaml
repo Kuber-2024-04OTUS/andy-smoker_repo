@@ -1,0 +1,170 @@
+---
+# Default values for homework.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+ingressIP: 192.168.49.2
+
+namespace: homework
+
+replicaCount: 3
+
+init:
+  name: busybox
+  image:
+    repository: busybox
+    tag: latest
+  command:
+
+app:
+  name: nginx
+  ports:
+    - 8000
+  image:
+    repository: nginx
+    tag: stable
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+
+initContainers:
+  busybox:
+    name: busybox
+    image:
+      repository: nginx
+      tag: latest
+
+roles:
+  - monitoring:
+      create: true
+      name: monitoring
+      apiGroup: rbac.authorization.k8s.io
+      accounts:
+        - monitoring
+      rules:
+        - apiGroups: [""]
+          resources:
+            - "pods"
+            - "nodes"
+            - "services"
+            - "endpoints"
+          verbs:
+            - "get"
+            - "watch"
+            - "list"
+
+clusterRoles:
+  admin:
+    name: cluster.admin
+    accounts:
+      - cd
+    rules:
+      - apiGroups: ["*"]
+        resources: ["*"]
+        verbs: ["*"]
+
+serviceAccounts:
+  monitoring:
+    create: true
+    automount: true
+    name: monitoring
+    annotations:
+      kubernetes.io/enforce-mountable-secrets: "true"
+  cd:
+    create: true
+    automount: true
+    name: cd
+    annotations:
+      kubernetes.io/enforce-mountable-secrets: "true"
+
+storageClass:
+  retain:
+    enable: false
+    name: "storage.class"
+    provisioner: k8s.io/minikube-hostpath
+    policy: Retain
+
+pvc:
+  nginx:
+    name: pvc1
+    volume: 500m
+    volumeMode: Filesystem
+
+configs:
+  nginx:
+    name: nginx-conf
+    data:
+      nginx.conf: |
+        server {
+          location / {
+            root /homework;
+            try_files $uri $uri/ /index.html;
+          }
+          location /conf {
+            autoindex on;
+            root /homework/;
+            location ~ "^/conf/.*" {
+              add_header Content-Disposition "attachment";
+              add_header Content-Type application/octet-stream;
+            }
+          }
+          location /metrics {
+            root /homework;
+            try_files $uri $uri/ /metrics.html;
+          }
+          listen 8000;
+        }
+  homework:
+    name: homework-conf
+    data:
+      config1: |
+        value1
+      config2: value2
+      config3: value3
+
+service:
+  nginx:
+    name: nginx
+    port: 8000
+
+ingress:
+  enable: true
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  hosts:
+    - host: homework.otus
+      http:
+        paths:
+          - path: /(metrics|homework|homepage|conf(/.*|))$
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: nginx
+                port:
+                  number: 8000
+
+readinessProbe:
+  enabled: true
+  nginx:
+    httpGet:
+      path: /index.html
+      port: 8000
+      httpHeaders:
+        - name: HTTP
+          value: "200"
+    initialDelaySeconds: 5
+    periodSeconds: 15
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  nginx-conf:
+    name: nginx-conf
+    configMap:
+      name: nginx-conf
+  homework-conf:
+    name: homework-conf
+    configMap:
+      name: homework-conf
+  homework:
+    name: homework
+    persistentVolumeClaim:
+      claimName: pvc1

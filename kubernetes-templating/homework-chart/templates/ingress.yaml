@@ -1,0 +1,18 @@
+---
+{{- if .Values.ingress.enable }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-nginx
+  namespace: {{ include "homework.namespace" . }}
+  {{- with .Values.ingress.annotations }}
+  annotations: 
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: nginx
+  {{- with .Values.ingress.hosts }}
+  rules:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{ end -}}
