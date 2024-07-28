@@ -19,12 +19,16 @@ spec:
               properties:
                 image:
                   type: string
+                  description: "Docker image"
                 database:
                   type: string
+                  description: "DB name"
                 password:
                   type: string
+                  description: "DB password"
                 storage_size:
                   type: string
+                  description: "DB storage size"
                   default: "1"
               required:
                 - image
