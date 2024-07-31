@@ -2,13 +2,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: mysql-operator
   namespace: homework
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: mysql-operator
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -16,12 +16,13 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      name: mysql-operator
       labels:
-        app: mysql
+        app: mysql-operator
     spec:
       serviceAccountName: admin
       containers:
-        - name: mysql
+        - name: mysql-operator
           image: roflmaoinmysoul/mysql-operator:1.0.0
           resources:
             limits:
